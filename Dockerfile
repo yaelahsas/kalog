@@ -1,47 +1,14 @@
-# Use PHP 7.4 FPM Alpine image
-FROM php:7.4-fpm-alpine
+FROM php:7.4-fpm
 
-# Set working directory
-WORKDIR /var/www/html
+WORKDIR /var/www/html/kalog
 
-# Install system dependencies
-RUN apk add --no-cache \
-    libzip-dev \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libxml2-dev \
-    libmcrypt-dev \
-    libwebp-dev \
-    oniguruma-dev
-
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install -j$(nproc) \
-        gd \
-        pdo_mysql \
-        mysqli \
-        zip \
-        xml \
-        mbstring \
-        curl \
-        opcache \
-        bcmath
+RUN apt-get update && apt-get install -y \
+    libfreetype6-dev libjpeg62-turbo-dev libpng-dev libzip-dev zip unzip \
+    libonig-dev libxml2-dev curl \
+    && docker-php-ext-install pdo pdo_mysql mysqli mbstring zip gd
 
 # Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set permissions for application
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html \
-    && chmod -R 777 /var/www/html/application/logs \
-    && chmod -R 777 /var/www/html/uploads
-
-# Copy custom php.ini
-COPY docker/php/php.ini /usr/local/etc/php/php.ini
-
-# Expose port 9000 for PHP-FPM
-EXPOSE 9000
-
-# Start PHP-FPM
-CMD ["php-fpm"]
+# Ubah permission agar CI bisa tulis ke folder cache/logs
+RUN chown -R www-data:www-data /app/application/cache /app/application/logs
