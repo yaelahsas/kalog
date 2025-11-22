@@ -9,6 +9,8 @@
 <!-- Sweet Alert -->
 <script src="<?= base_url('assets/sweetalert2') ?>/dist/sweetalert2.all.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <?php if(isset($datatables) && $datatables) { ?>
   <!-- DataTables -->
   <script src="<?= base_url('assets/adminlte') ?>/plugins/datatables/jquery.dataTables.min.js"></script>

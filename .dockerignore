@@ -1,0 +1,90 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+readme.rst
+contributing.md
+LICENSE
+license.txt
+DESIGN_SYSTEM_DOCUMENTATION.md
+user_guide/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+application/logs/*
+!application/logs/index.html
+
+# Temporary files
+*.tmp
+*.temp
+
+# Cache
+.cache/
+.sass-cache/
+
+# Node modules (if any)
+node_modules/
+
+# Docker files
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Excel files
+*.xlsx
+*.xls
+
+# Test files
+test_chart_api.php
+check_data.php
+check_facilities_detail.php
+
+# Database
+database/
+
+# System files that don't need to be in container
+system/language/
+system/helpers/
+system/libraries/Session/
+system/libraries/Calendar.php
+system/libraries/Cart.php
+system/libraries/Driver.php
+system/libraries/Email.php
+system/libraries/Encrypt.php
+system/libraries/Encryption.php
+system/libraries/Form_validation.php
+system/libraries/Ftp.php
+system/libraries/Image_lib.php
+system/libraries/Parser.php
+system/libraries/Profiler.php
+system/libraries/Table.php
+system/libraries/Trackback.php
+system/libraries/Typography.php
+system/libraries/Unit_test.php
+system/libraries/Upload.php
+system/libraries/User_agent.php
+system/libraries/Xmlrpc.php
+system/libraries/Xmlrpcs.php
+system/libraries/Zip.php
+
+# Uploads directory (will be mounted as volume)
+uploads/*
+
+# Assets that might be built separately
+assets/sweetalert2/src/
+assets/sweetalert2/*.json
+assets/sweetalert2/*.ts
+assets/sweetalert2/README.md
+assets/sweetalert2/LICENSE

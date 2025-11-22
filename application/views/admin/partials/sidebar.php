@@ -1,9 +1,9 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-info elevation-4">
     <!-- Brand Logo -->
-    <a href="<?= site_url('admin/dashboard/index') ?>" class="brand-link">
+    <a href="<?= site_url('dashboard') ?>" class="brand-link">
       <img src="<?= base_url('assets/adminlte') ?>/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">Base CI</span>
+      <span class="brand-text font-weight-light">Kalog System</span>
     </a>
 
     <!-- Sidebar -->
@@ -14,7 +14,7 @@
           <img src="<?= base_url('uploads/account/'.$session['image']) ?>" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="<?= site_url('admin/dashboard/index') ?>" class="d-block"><?= $session['name'] ?></a>
+          <a href="<?= site_url('dashboard') ?>" class="d-block"><?= $session['name'] ?></a>
         </div>
       </div>
 
@@ -25,11 +25,125 @@
                with font-awesome or any other icon font library -->
 
           <li class="nav-item">
-            <a href="<?= site_url('admin/dashboard/index') ?>" class="nav-link <?php if($sidebar=='dashboard'){echo'active';}?>">
-              <i class="nav-icon fas fa-th"></i>
-              <p>Dashboard</p>
+            <a href="<?= site_url('dashboard') ?>" class="nav-link <?php if($sidebar=='dashboard'){echo'active';}?>">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>Dashboard Monitoring</p>
             </a>
           </li>
+
+          <!-- Facilities Menu -->
+          <?php $side_facilities = array('facilities','facility-detail','facility-add','facility-edit') ?>
+          <li class="nav-item <?php if(in_array($sidebar, $side_facilities)){echo 'menu-open';}?>">
+            <a href="#" class="nav-link <?php if(in_array($sidebar, $side_facilities)){echo 'active';}?>">
+              <i class="nav-icon fas fa-truck-loading"></i>
+              <p>
+                Fasilitas
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="<?= site_url('dashboard/facilities') ?>" class="nav-link <?php if($sidebar=='facilities'){echo 'active';} ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Daftar Fasilitas</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= site_url('dashboard/facilities/add') ?>" class="nav-link <?php if($sidebar=='facility-add'){echo 'active';} ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Tambah Fasilitas</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Areas Menu -->
+          <?php $side_areas = array('areas','area-add','area-edit') ?>
+          <li class="nav-item <?php if(in_array($sidebar, $side_areas)){echo 'menu-open';}?>">
+            <a href="#" class="nav-link <?php if(in_array($sidebar, $side_areas)){echo 'active';}?>">
+              <i class="nav-icon fas fa-map-marker-alt"></i>
+              <p>
+                Area
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="<?= site_url('dashboard/areas') ?>" class="nav-link <?php if($sidebar=='areas'){echo 'active';} ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Daftar Area</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= site_url('dashboard/areas/add') ?>" class="nav-link <?php if($sidebar=='area-add'){echo 'active';} ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Tambah Area</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Vendors Menu -->
+          <?php $side_vendors = array('vendors','vendor-add','vendor-edit') ?>
+          <li class="nav-item <?php if(in_array($sidebar, $side_vendors)){echo 'menu-open';}?>">
+            <a href="#" class="nav-link <?php if(in_array($sidebar, $side_vendors)){echo 'active';}?>">
+              <i class="nav-icon fas fa-building"></i>
+              <p>
+                Vendor
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="<?= site_url('dashboard/vendors') ?>" class="nav-link <?php if($sidebar=='vendors'){echo 'active';} ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Daftar Vendor</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= site_url('dashboard/vendors/add') ?>" class="nav-link <?php if($sidebar=='vendor-add'){echo 'active';} ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Tambah Vendor</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Facility Types Menu -->
+          <?php $side_types = array('facility-types','facility-type-add','facility-type-edit') ?>
+          <li class="nav-item <?php if(in_array($sidebar, $side_types)){echo 'menu-open';}?>">
+            <a href="#" class="nav-link <?php if(in_array($sidebar, $side_types)){echo 'active';}?>">
+              <i class="nav-icon fas fa-cogs"></i>
+              <p>
+                Jenis Fasilitas
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="<?= site_url('dashboard/facility_types') ?>" class="nav-link <?php if($sidebar=='facility-types'){echo 'active';} ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Daftar Jenis</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= site_url('dashboard/facility_types/add') ?>" class="nav-link <?php if($sidebar=='facility-type-add'){echo 'active';} ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Tambah Jenis</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Reports Menu -->
+          <li class="nav-item">
+            <a href="<?= site_url('dashboard/reports') ?>" class="nav-link <?php if($sidebar=='reports'){echo'active';}?>">
+              <i class="nav-icon fas fa-chart-bar"></i>
+              <p>Laporan</p>
+            </a>
+          </li>
+
+          <li class="nav-header">MANAGEMENT</li>
 
           <?php 
             $side_account = array('account-index','account-add');

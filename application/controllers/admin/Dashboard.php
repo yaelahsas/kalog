@@ -6,11 +6,12 @@ class Dashboard extends CI_Controller {
 
   public function __construct(){
     parent::__construct();
+    $this->load->model(['M_Auth', 'M_Facility', 'M_Area', 'M_Vendor', 'M_FacilityType']);
     $this->sess = $this->M_Auth->session(array('root','admin'));
     if ($this->sess === FALSE) {
       redirect(site_url('admin/auth/logout'),'refresh');
     }
-	}
+ }
 
   
   // ==============================================
@@ -30,7 +31,7 @@ class Dashboard extends CI_Controller {
     $data['session']    = $this->sess;
     $data['sidebar']    = 'dashboard';
     $data['layout']     = 'layout-navbar-fixed pace-warning';
-    $data['title']      = 'Dashboard';
+    $data['title']      = 'Dashboard Monitoring Fasilitas';
     $data['swal'] = array(
       'type' => 'default',
       'button'  => NULL,
@@ -40,6 +41,24 @@ class Dashboard extends CI_Controller {
       'Home'  => site_url('admin/dashboard/index'),
       'Dashboard' => site_url('admin/dashboard/index'),
     );
+
+    // Get dashboard statistics
+    $data['stats'] = $this->M_Facility->get_dashboard_stats();
+    
+    // Get expiring contracts
+    $data['expiring_contracts'] = $this->M_Facility->get_expiring_contracts();
+    
+    // Get recent facilities
+    $data['recent_facilities'] = $this->M_Facility->get_newest_facilities(10);
+    
+    // Get areas with facility count
+    $data['areas'] = $this->M_Area->get_areas_with_facility_count();
+    
+    // Get facility types with count
+    $data['facility_types'] = $this->M_FacilityType->get_facility_types_with_count();
+    
+    // Get vendor statistics
+    $data['vendor_stats'] = $this->M_Vendor->get_vendor_stats();
 
     $this->load->view('admin/dashboard/index.php', $data);
   }
