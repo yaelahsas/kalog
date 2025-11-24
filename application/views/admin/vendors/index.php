@@ -79,7 +79,7 @@ $(document).ready(function() {
         "processing": true,
         "serverSide": true,
         "ajax": {
-            "url": "<?php echo site_url('dashboard/vendors/data'); ?>",
+            "url": "<?php echo site_url('admin/Vendors/data'); ?>",
             "type": "POST"
         },
         "columns": [
@@ -141,7 +141,7 @@ function deleteVendor(id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "<?php echo site_url('dashboard/vendors/delete/'); ?>" + id,
+                url: "<?php echo site_url('admin/Vendors/delete/'); ?>" + id,
                 type: "POST",
                 dataType: "json",
                 success: function(response) {

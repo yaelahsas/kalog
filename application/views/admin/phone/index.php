@@ -113,7 +113,7 @@
 
     table = $('#_table_').DataTable({
       ajax: {
-        url: '<?= site_url('admin/phone/data')?>',
+        url: '<?= site_url('admin/Phone/data')?>',
         type: 'POST',
         dataSrc: '',
         data: function (d) {

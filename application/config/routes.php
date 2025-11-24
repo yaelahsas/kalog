@@ -53,49 +53,49 @@ $route['default_controller'] = 'View';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
-$route['admin'] = 'admin/auth/login';
+$route['admin'] = 'admin/Auth/login';
 
 // Dashboard routes untuk menghandle URL dashboard/*
-$route['dashboard'] = 'admin/dashboard';
-$route['dashboard/facilities'] = 'admin/facilities';
-$route['dashboard/facilities/add'] = 'admin/facilities/add';
-$route['dashboard/facilities/edit/(:any)'] = 'admin/facilities/edit/$1';
-$route['dashboard/facility_detail/(:any)'] = 'admin/facilities/detail/$1';
-$route['dashboard/areas'] = 'admin/areas';
-$route['dashboard/areas/add'] = 'admin/areas/add';
-$route['dashboard/areas/edit/(:any)'] = 'admin/areas/edit/$1';
-$route['dashboard/vendors'] = 'admin/vendors';
-$route['dashboard/vendors/add'] = 'admin/vendors/add';
-$route['dashboard/vendors/edit/(:any)'] = 'admin/vendors/edit/$1';
-$route['dashboard/facility_types'] = 'admin/facility_types';
-$route['dashboard/facility_types/add'] = 'admin/facility_types/add';
-$route['dashboard/facility_types/edit/(:any)'] = 'admin/facility_types/edit/$1';
-$route['dashboard/reports'] = 'admin/reports';
-$route['dashboard/reports/get_chart_data'] = 'admin/reports/get_chart_data';
-$route['dashboard/export_excel'] = 'admin/reports/export_excel';
-$route['dashboard/reports/get_newest_facilities'] = 'admin/reports/get_newest_facilities';
-$route['dashboard/reports/get_facilities_by_type_detailed'] = 'admin/reports/get_facilities_by_type_detailed';
-$route['dashboard/reports/get_facilities_by_area_detailed'] = 'admin/reports/get_facilities_by_area_detailed';
-$route['dashboard/facilities/filter'] = 'admin/facilities/filter';
-$route['dashboard/facilities/search'] = 'admin/facilities/search';
+$route['dashboard'] = 'admin/Dashboard';
+$route['dashboard/facilities'] = 'admin/Facilities';
+$route['dashboard/facilities/add'] = 'admin/Facilities/add';
+$route['dashboard/facilities/edit/(:any)'] = 'admin/Facilities/edit/$1';
+$route['dashboard/facility_detail/(:any)'] = 'admin/Facilities/detail/$1';
+$route['dashboard/areas'] = 'admin/Areas';
+$route['dashboard/areas/add'] = 'admin/Areas/add';
+$route['dashboard/areas/edit/(:any)'] = 'admin/Areas/edit/$1';
+$route['dashboard/vendors'] = 'admin/Vendors';
+$route['dashboard/vendors/add'] = 'admin/Vendors/add';
+$route['dashboard/vendors/edit/(:any)'] = 'admin/Vendors/edit/$1';
+$route['dashboard/facility_types'] = 'admin/Facility_Types';
+$route['dashboard/facility_types/add'] = 'admin/Facility_Types/add';
+$route['dashboard/facility_types/edit/(:any)'] = 'admin/Facility_Types/edit/$1';
+$route['dashboard/reports'] = 'admin/Reports';
+$route['dashboard/reports/get_chart_data'] = 'admin/Reports/get_chart_data';
+$route['dashboard/export_excel'] = 'admin/Reports/export_excel';
+$route['dashboard/reports/get_newest_facilities'] = 'admin/Reports/get_newest_facilities';
+$route['dashboard/reports/get_facilities_by_type_detailed'] = 'admin/Reports/get_facilities_by_type_detailed';
+$route['dashboard/reports/get_facilities_by_area_detailed'] = 'admin/Reports/get_facilities_by_area_detailed';
+$route['dashboard/facilities/filter'] = 'admin/Facilities/filter';
+$route['dashboard/facilities/search'] = 'admin/Facilities/search';
 
 // Routes untuk method data() yang digunakan oleh DataTables
-$route['admin/vendors/data'] = 'admin/vendors/data';
-$route['admin/areas/data'] = 'admin/areas/data';
-$route['admin/facilities/data'] = 'admin/facilities/data';
-$route['admin/facility_types/data'] = 'admin/facility_types/data';
-$route['admin/account/data'] = 'admin/account/data';
-$route['admin/category/data'] = 'admin/category/data';
-$route['admin/phone/data'] = 'admin/phone/data';
+$route['admin/vendors/data'] = 'admin/Vendors/data';
+$route['admin/areas/data'] = 'admin/Areas/data';
+$route['admin/facilities/data'] = 'admin/Facilities/data';
+$route['admin/facility_types/data'] = 'admin/Facility_Types/data';
+$route['admin/account/data'] = 'admin/Account/data';
+$route['admin/category/data'] = 'admin/Category/data';
+$route['admin/phone/data'] = 'admin/Phone/data';
 
 // Routes untuk method delete() yang digunakan oleh DataTables
-$route['admin/areas/delete/(:any)'] = 'admin/areas/delete/$1';
-$route['admin/facilities/delete/(:any)'] = 'admin/facilities/delete/$1';
-$route['admin/facility_types/delete/(:any)'] = 'admin/facility_types/delete/$1';
-$route['admin/vendors/delete/(:any)'] = 'admin/vendors/delete/$1';
+$route['admin/areas/delete/(:any)'] = 'admin/Areas/delete/$1';
+$route['admin/facilities/delete/(:any)'] = 'admin/Facilities/delete/$1';
+$route['admin/facility_types/delete/(:any)'] = 'admin/Facility_Types/delete/$1';
+$route['admin/vendors/delete/(:any)'] = 'admin/Vendors/delete/$1';
 
 // Routes untuk method delete_ajax() yang digunakan oleh DataTables
-$route['admin/areas/delete_ajax/(:any)'] = 'admin/areas/delete_ajax/$1';
-$route['admin/facilities/delete_ajax/(:any)'] = 'admin/facilities/delete_ajax/$1';
-$route['admin/facility_types/delete_ajax/(:any)'] = 'admin/facility_types/delete_ajax/$1';
-$route['admin/vendors/delete_ajax/(:any)'] = 'admin/vendors/delete_ajax/$1';
+$route['admin/areas/delete_ajax/(:any)'] = 'admin/Areas/delete_ajax/$1';
+$route['admin/facilities/delete_ajax/(:any)'] = 'admin/Facilities/delete_ajax/$1';
+$route['admin/facility_types/delete_ajax/(:any)'] = 'admin/Facility_Types/delete_ajax/$1';
+$route['admin/vendors/delete_ajax/(:any)'] = 'admin/Vendors/delete_ajax/$1';

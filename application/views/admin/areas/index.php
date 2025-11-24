@@ -79,7 +79,7 @@ $(document).ready(function() {
         "processing": true,
         "serverSide": true,
         "ajax": {
-            "url": "<?php echo site_url('admin/areas/data'); ?>",
+            "url": "<?php echo site_url('admin/Areas/data'); ?>",
             "type": "POST"
         },
         "columns": [

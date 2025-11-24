@@ -112,7 +112,7 @@
   $(document).ready(function(){
     table = $('#_table_').DataTable({
       ajax: {
-        url: '<?= site_url('admin/account/data')?>',
+        url: '<?= site_url('admin/Account/data')?>',
         type: 'POST',
         dataSrc: '',
         data: { [csrfName]: csrfHash },

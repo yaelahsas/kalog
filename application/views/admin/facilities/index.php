@@ -87,7 +87,7 @@ $(document).ready(function() {
         "processing": true,
         "serverSide": true,
         "ajax": {
-            "url": "<?php echo site_url('admin/facilities/data'); ?>",
+            "url": "<?php echo site_url('admin/Facilities/data'); ?>",
             "type": "POST"
         },
         "columns": [
@@ -179,7 +179,7 @@ function deleteFacility(id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "<?php echo site_url('admin/facilities/delete_ajax/'); ?>" + id,
+                url: "<?php echo site_url('admin/Facilities/delete_ajax/'); ?>" + id,
                 type: "POST",
                 dataType: "json",
                 success: function(response) {
