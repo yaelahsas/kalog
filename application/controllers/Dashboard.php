@@ -162,22 +162,6 @@ class Dashboard extends CI_Controller {
         $this->load->view('admin/partials/javascript');
     }
 
-    // Facility detail page
-    public function facility_detail($id) {
-        $data['title'] = 'Detail Fasilitas';
-        $data['facility'] = $this->M_Facility->get_facility_by_id($id);
-        
-        if (!$data['facility']) {
-            show_404();
-        }
-        
-        $this->load->view('admin/partials/head', $data);
-        $this->load->view('admin/partials/navbar');
-        $this->load->view('admin/partials/sidebar');
-        $this->load->view('admin/facilities/detail', $data);
-        $this->load->view('admin/partials/footer');
-        $this->load->view('admin/partials/javascript');
-    }
 
     // Reports page
     public function reports() {

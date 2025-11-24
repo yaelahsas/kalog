@@ -79,6 +79,22 @@ class Facilities extends CI_Controller {
         $this->form_validation->set_rules('tahun_unit', 'Tahun Unit', 'numeric');
         $this->form_validation->set_rules('status', 'Status', 'required');
         
+        // File upload validation
+        if (!empty($_FILES['dokumen_perjanjian']['name'])) {
+            $config['upload_path'] = './uploads/facilities/';
+            $config['allowed_types'] = 'jpg|jpeg|png|pdf';
+            $config['max_size'] = 2048; // 2MB
+            $config['encrypt_name'] = TRUE;
+            
+            $this->load->library('upload', $config);
+            
+            if (!$this->upload->do_upload('dokumen_perjanjian')) {
+                $this->form_validation->set_error_delimiters('<small class="text-danger">', '</small>');
+                $this->session->set_flashdata('notif', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-ban"></i> ' . $this->upload->display_errors('', '') . '</div>');
+                redirect(site_url('dashboard/facilities/add'),'refresh');
+            }
+        }
+        
         if ($this->form_validation->run() === TRUE) {
             $data_insert = [
                 'area_id' => $this->input->post('area_id'),
@@ -95,6 +111,12 @@ class Facilities extends CI_Controller {
                 'status' => $this->input->post('status'),
                 'keterangan' => $this->input->post('keterangan') ?: null
             ];
+            
+            // Handle file upload
+            if (!empty($_FILES['dokumen_perjanjian']['name'])) {
+                $upload_data = $this->upload->data();
+                $data_insert['dokumen_perjanjian'] = $upload_data['file_name'];
+            }
             
             if ($this->M_Facility->insert_facility($data_insert)) {
                 $this->session->set_flashdata('notif', '<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-check"></i> Data berhasil disimpan!</div>');
@@ -161,7 +183,25 @@ class Facilities extends CI_Controller {
             $this->form_validation->set_rules('tahun_unit', 'Tahun Unit', 'numeric');
             $this->form_validation->set_rules('status', 'Status', 'required');
             
-            if ($this->form_validation->run() === TRUE) {
+            // File upload validation
+            $upload_success = true;
+            if (!empty($_FILES['dokumen_perjanjian']['name'])) {
+                $config['upload_path'] = './uploads/facilities/';
+                $config['allowed_types'] = 'jpg|jpeg|png|pdf';
+                $config['max_size'] = 2048; // 2MB
+                $config['encrypt_name'] = TRUE;
+                
+                $this->load->library('upload', $config);
+                
+                if (!$this->upload->do_upload('dokumen_perjanjian')) {
+                    $upload_success = false;
+                    $this->form_validation->set_error_delimiters('<small class="text-danger">', '</small>');
+                    $this->session->set_flashdata('notif', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-ban"></i> ' . $this->upload->display_errors('', '') . '</div>');
+                    redirect(site_url('dashboard/facilities/edit/'.$id),'refresh');
+                }
+            }
+            
+            if ($this->form_validation->run() === TRUE && $upload_success) {
                 $data_update = [
                     'area_id' => $this->input->post('area_id'),
                     'facility_type_id' => $this->input->post('facility_type_id'),
@@ -177,6 +217,18 @@ class Facilities extends CI_Controller {
                     'status' => $this->input->post('status'),
                     'keterangan' => $this->input->post('keterangan') ?: null
                 ];
+                
+                // Handle file upload
+                if (!empty($_FILES['dokumen_perjanjian']['name'])) {
+                    // Delete old file if exists
+                    $old_facility = $this->M_Facility->get_facility_by_id($id);
+                    if (!empty($old_facility->dokumen_perjanjian) && file_exists('./uploads/facilities/' . $old_facility->dokumen_perjanjian)) {
+                        unlink('./uploads/facilities/' . $old_facility->dokumen_perjanjian);
+                    }
+                    
+                    $upload_data = $this->upload->data();
+                    $data_update['dokumen_perjanjian'] = $upload_data['file_name'];
+                }
                 
                 if ($this->M_Facility->update_facility($id, $data_update)) {
                     $this->session->set_flashdata('notif', '<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-check"></i> Data berhasil diupdate!</div>');
@@ -197,12 +249,9 @@ class Facilities extends CI_Controller {
                 $data['inputmask']  = false;
                 $data['dropzonejs'] = false;
                 $data['summernote'] = false;
-                
-                $this->load->view('admin/partials/head-new', $data);
-                $this->load->view('admin/partials/sidebar-new', $data);
-                $this->load->view('admin/partials/header-new', $data);
+       
                 $this->load->view('admin/facilities/edit', $data);
-                $this->load->view('admin/partials/footer-new', $data);
+  
             }
         } else {
             redirect(site_url('dashboard/facilities'),'refresh');
@@ -235,11 +284,11 @@ class Facilities extends CI_Controller {
             $data['dropzonejs'] = false;
             $data['summernote'] = false;
             
-            $this->load->view('admin/partials/head-new', $data);
-            $this->load->view('admin/partials/sidebar-new', $data);
-            $this->load->view('admin/partials/header-new', $data);
+            // Load views with proper layout
+            
+           
             $this->load->view('admin/facilities/detail', $data);
-            $this->load->view('admin/partials/footer-new', $data);
+        
         } else {
             redirect(site_url('dashboard/facilities'),'refresh');
         }
@@ -287,11 +336,9 @@ class Facilities extends CI_Controller {
         $data['dropzonejs'] = false;
         $data['summernote'] = false;
         
-        $this->load->view('admin/partials/head-new', $data);
-        $this->load->view('admin/partials/sidebar-new', $data);
-        $this->load->view('admin/partials/header-new', $data);
+
         $this->load->view('admin/facilities/filter_result', $data);
-        $this->load->view('admin/partials/footer-new', $data);
+      
     }
 
     // Search facilities
@@ -322,11 +369,9 @@ class Facilities extends CI_Controller {
         $data['dropzonejs'] = false;
         $data['summernote'] = false;
         
-        $this->load->view('admin/partials/head-new', $data);
-        $this->load->view('admin/partials/sidebar-new', $data);
-        $this->load->view('admin/partials/header-new', $data);
+
         $this->load->view('admin/facilities/search_result', $data);
-        $this->load->view('admin/partials/footer-new', $data);
+
     }
 
     // Delete facility

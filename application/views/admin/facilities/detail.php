@@ -94,6 +94,41 @@
                     <td><?php echo $facility->no_perjanjian ? $facility->no_perjanjian : '-'; ?></td>
                   </tr>
                   <tr>
+                    <td><strong>Dokumen Perjanjian</strong></td>
+                    <td>
+                      <?php if(!empty($facility->dokumen_perjanjian)): ?>
+                        <?php
+                        $file_path = 'uploads/facilities/'.$facility->dokumen_perjanjian;
+                        $file_extension = strtolower(pathinfo($facility->dokumen_perjanjian, PATHINFO_EXTENSION));
+                        $is_image = in_array($file_extension, ['jpg', 'jpeg', 'png', 'gif']);
+                        ?>
+                        
+                        <?php if($is_image): ?>
+                          <div class="mb-2">
+                            <img src="<?php echo base_url($file_path); ?>"
+                                 alt="Dokumen Perjanjian"
+                                 class="img-thumbnail"
+                                 style="max-width: 200px; max-height: 150px; cursor: pointer;"
+                                 onclick="window.open('<?php echo base_url($file_path); ?>', '_blank')">
+                          </div>
+                          <a href="<?php echo base_url($file_path); ?>" target="_blank" class="btn btn-sm btn-info">
+                            <i class="fas fa-search-plus"></i> Lihat Gambar
+                          </a>
+                        <?php else: ?>
+                          <a href="<?php echo base_url($file_path); ?>" target="_blank" class="btn btn-sm btn-info">
+                            <i class="fas fa-file-pdf"></i> Lihat Dokumen PDF
+                          </a>
+                        <?php endif; ?>
+                        
+                        <a href="<?php echo base_url($file_path); ?>" download="<?php echo $facility->dokumen_perjanjian; ?>" class="btn btn-sm btn-success ml-1">
+                          <i class="fas fa-download"></i> Download
+                        </a>
+                      <?php else: ?>
+                        <span class="text-muted">Tidak ada dokumen</span>
+                      <?php endif; ?>
+                    </td>
+                  </tr>
+                  <tr>
                     <td><strong>Status</strong></td>
                     <td>
                       <span class="badge badge-<?php echo $facility->status == 'active' ? 'success' : ($facility->status == 'maintenance' ? 'warning' : 'danger'); ?>">

@@ -152,6 +152,24 @@
               </div>
 
               <div class="form-group row">
+                <label for="dokumen_perjanjian" class="col-sm-2 col-form-label">Dokumen Perjanjian</label>
+                <div class="col-sm-10">
+                  <input type="file" class="form-control" id="dokumen_perjanjian" name="dokumen_perjanjian" accept=".jpg,.jpeg,.png,.pdf">
+                  <small class="form-text text-muted">Format yang diizinkan: JPG, JPEG, PNG, PDF (Maksimal 2MB)</small>
+                  <?php if(!empty($facility->dokumen_perjanjian)): ?>
+                    <div class="mt-2">
+                      <small class="text-info">Dokumen saat ini:
+                        <a href="<?php echo base_url('uploads/facilities/'.$facility->dokumen_perjanjian); ?>" target="_blank">
+                          <?php echo $facility->dokumen_perjanjian; ?>
+                        </a>
+                      </small>
+                    </div>
+                  <?php endif; ?>
+                  <?php echo form_error('dokumen_perjanjian', '<small class="text-danger">', '</small>'); ?>
+                </div>
+              </div>
+
+              <div class="form-group row">
                 <label for="status" class="col-sm-2 col-form-label">Status</label>
                 <div class="col-sm-10">
                   <select class="form-control" id="status" name="status" required>
