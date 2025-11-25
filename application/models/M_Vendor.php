@@ -31,6 +31,14 @@ class M_Vendor extends CI_Model {
 
     // Delete vendor
     public function delete_vendor($id) {
+        // Check if vendor is being used by facilities
+        $this->db->where('vendor_id', $id);
+        $facilities_count = $this->db->count_all_results('facilities');
+        
+        if ($facilities_count > 0) {
+            return false; // Cannot delete, vendor is in use
+        }
+        
         return $this->db->delete('vendors', ['id' => $id]);
     }
 

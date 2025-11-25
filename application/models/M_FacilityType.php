@@ -31,6 +31,14 @@ class M_FacilityType extends CI_Model {
 
     // Delete facility type
     public function delete_facility_type($id) {
+        // Check if facility type is being used by facilities
+        $this->db->where('facility_type_id', $id);
+        $facilities_count = $this->db->count_all_results('facilities');
+        
+        if ($facilities_count > 0) {
+            return false; // Cannot delete, facility type is in use
+        }
+        
         return $this->db->delete('facility_types', ['id' => $id]);
     }
 

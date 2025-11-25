@@ -649,59 +649,35 @@ class Facilities extends CI_Controller {
 
     // Delete facility via AJAX
     public function delete_ajax($id = null) {
+        // Load the ajax response helper
+        $this->load->helper('ajax_response');
+        
         // Check if user is authenticated
         $session_data = $this->M_Auth->session(array('root','admin','user'));
         if ($session_data === FALSE) {
-            $response = [
-                'success' => false,
-                'message' => 'Authentication required'
-            ];
-            echo json_encode($response);
+            ajax_auth_required_response();
             return;
         }
         
         // Check if user has permission to delete
         if (!can_delete($session_data)) {
-            $response = [
-                'success' => false,
-                'message' => 'Anda tidak memiliki izin untuk menghapus data!'
-            ];
-            echo json_encode($response);
+            ajax_permission_denied_response();
             return;
         }
         
-        header('Content-Type: application/json');
-        
         if ($id == null) {
-            $response = [
-                'success' => false,
-                'message' => 'Facility ID is required'
-            ];
-            echo json_encode($response);
+            ajax_not_found_response('Facility ID is required');
             return;
         }
         
         try {
             if ($this->M_Facility->delete_facility($id)) {
-                $response = [
-                    'success' => true,
-                    'message' => 'Facility deleted successfully'
-                ];
+                ajax_success_response('Fasilitas berhasil dihapus!');
             } else {
-                $response = [
-                    'success' => false,
-                    'message' => 'Failed to delete facility'
-                ];
+                ajax_error_response('Gagal menghapus fasilitas');
             }
-            
-            echo json_encode($response);
         } catch (Exception $e) {
-            $response = [
-                'success' => false,
-                'message' => 'Error deleting facility: ' . $e->getMessage()
-            ];
-            
-            echo json_encode($response);
+            ajax_error_response('Error deleting facility: ' . $e->getMessage());
         }
     }
 

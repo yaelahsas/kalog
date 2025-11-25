@@ -245,6 +245,40 @@ class Vendors extends CI_Controller {
         echo json_encode($response);
     }
 
+    public function delete_ajax($id = null)
+    {
+        // Load ajax response helper
+        $this->load->helper('ajax_response');
+        
+        // Check if user is authenticated
+        $session_data = $this->M_Auth->session(array('root','admin','user'));
+        if ($session_data === FALSE) {
+            ajax_auth_required_response();
+            return;
+        }
+        
+        // Check if user has permission to delete
+        if (!can_delete($session_data)) {
+            ajax_permission_denied_response();
+            return;
+        }
+        
+        if ($id == null) {
+            ajax_not_found_response('Vendor ID is required');
+            return;
+        }
+        
+        try {
+            if ($this->M_Vendor->delete_vendor($id)) {
+                ajax_success_response('Vendor berhasil dihapus!');
+            } else {
+                ajax_error_response('Gagal menghapus vendor. Vendor mungkin sedang digunakan oleh fasilitas.');
+            }
+        } catch (Exception $e) {
+            ajax_error_response('Error deleting vendor: ' . $e->getMessage());
+        }
+    }
+
     public function check_nama_vendor($nama_vendor, $id){
         $vendor = $this->M_Vendor->get_vendor_by_id($id);
         if ($vendor && $vendor->nama_vendor != $nama_vendor) {

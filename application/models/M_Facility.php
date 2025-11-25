@@ -42,6 +42,24 @@ class M_Facility extends CI_Model {
 
     // Delete facility
     public function delete_facility($id) {
+        // Get facility data to check for associated files
+        $facility = $this->get_facility_by_id($id);
+        
+        if (!$facility) {
+            return false; // Facility not found
+        }
+        
+        // Delete associated files if they exist
+        $upload_path = './uploads/facilities/';
+        
+        if (!empty($facility->dokumen_perjanjian) && file_exists($upload_path . $facility->dokumen_perjanjian)) {
+            unlink($upload_path . $facility->dokumen_perjanjian);
+        }
+        
+        if (!empty($facility->dokumen_bast) && file_exists($upload_path . $facility->dokumen_bast)) {
+            unlink($upload_path . $facility->dokumen_bast);
+        }
+        
         return $this->db->delete('facilities', ['id' => $id]);
     }
 

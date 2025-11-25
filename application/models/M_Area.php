@@ -36,6 +36,14 @@ class M_Area extends CI_Model {
 
     // Delete area
     public function delete_area($id) {
+        // Check if area is being used by facilities
+        $this->db->where('area_id', $id);
+        $facilities_count = $this->db->count_all_results('facilities');
+        
+        if ($facilities_count > 0) {
+            return false; // Cannot delete, area is in use
+        }
+        
         return $this->db->delete('areas', ['id' => $id]);
     }
 

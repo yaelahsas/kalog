@@ -148,10 +148,13 @@ function deleteVendor(id) {
         confirmButtonText: 'Ya, hapus!',
         cancelButtonText: 'Batal'
     }).then((result) => {
-        if (result.isConfirmed) {
+        if (result.value) {
             $.ajax({
-                url: "<?php echo site_url('admin/Vendors/delete/'); ?>" + id,
+                url: "<?php echo site_url('admin/Vendors/delete_ajax/'); ?>" + id,
                 type: "POST",
+                data: {
+                    [csrfName]: csrfHash
+                },
                 dataType: "json",
                 success: function(response) {
                     if (response.status == 'success') {
@@ -169,10 +172,11 @@ function deleteVendor(id) {
                         );
                     }
                 },
-                error: function() {
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
                     Swal.fire(
                         'Gagal!',
-                        'Terjadi kesalahan saat menghapus data',
+                        'Terjadi kesalahan saat menghapus data: ' + error,
                         'error'
                     );
                 }
