@@ -210,7 +210,6 @@
           $('#_email_').prop('disabled', true);
         }
       } else if (id == '_checkpassword_' || id == '_checkpassconf_'){
-        console.log('Passconf Jalan');
         if ($(this).is(':checked')) {
           $('#_password_').prop('disabled', false );
           $('#_passconf_').prop('disabled', false );
@@ -223,7 +222,6 @@
 
     $('#img-delete').on('click', function(){
       var url = $(this).data('url');
-      // console.log(url);
       $.ajax({
         type: 'POST',
         data: { [csrfName]: csrfHash },

@@ -207,7 +207,6 @@
 
     $('#img-delete').on('click', function(){
       var url = $(this).data('url');
-      // console.log(url);
       $.ajax({
         type: 'POST',
         data: { [csrfName]: csrfHash },

@@ -54,7 +54,7 @@
                   <select class="form-control" id="area_id" name="area_id" required>
                     <option value="">Pilih Area</option>
                     <?php foreach($areas as $area): ?>
-                      <option value="<?php echo $area->id; ?>" <?php echo set_select('area_id', $area->id); ?>><?php echo $area->nama_area; ?></option>
+                      <option value="<?php echo $area->id; ?>" <?php echo set_select('area_id', $area->id, ($facility->area_id == $area->id)); ?>><?php echo $area->nama_area; ?></option>
                     <?php endforeach; ?>
                   </select>
                   <?php echo form_error('area_id', '<small class="text-danger">', '</small>'); ?>
@@ -67,7 +67,7 @@
                   <select class="form-control" id="facility_type_id" name="facility_type_id" required>
                     <option value="">Pilih Jenis Fasilitas</option>
                     <?php foreach($facility_types as $type): ?>
-                      <option value="<?php echo $type->id; ?>" <?php echo set_select('facility_type_id', $type->id); ?>><?php echo $type->nama_tipe; ?></option>
+                      <option value="<?php echo $type->id; ?>" <?php echo set_select('facility_type_id', $type->id, ($facility->facility_type_id == $type->id)); ?>><?php echo $type->nama_tipe; ?></option>
                     <?php endforeach; ?>
                   </select>
                   <?php echo form_error('facility_type_id', '<small class="text-danger">', '</small>'); ?>
@@ -80,7 +80,7 @@
                   <select class="form-control" id="vendor_id" name="vendor_id">
                     <option value="">Pilih Vendor</option>
                     <?php foreach($vendors as $vendor): ?>
-                      <option value="<?php echo $vendor->id; ?>" <?php echo set_select('vendor_id', $vendor->id); ?>><?php echo $vendor->nama_vendor; ?></option>
+                      <option value="<?php echo $vendor->id; ?>" <?php echo set_select('vendor_id', $vendor->id, ($facility->vendor_id == $vendor->id)); ?>><?php echo $vendor->nama_vendor; ?></option>
                     <?php endforeach; ?>
                   </select>
                   <?php echo form_error('vendor_id', '<small class="text-danger">', '</small>'); ?>
@@ -170,13 +170,31 @@
               </div>
 
               <div class="form-group row">
+                <label for="dokumen_bast" class="col-sm-2 col-form-label">Dokumen BAST</label>
+                <div class="col-sm-10">
+                  <input type="file" class="form-control" id="dokumen_bast" name="dokumen_bast" accept=".jpg,.jpeg,.png,.pdf">
+                  <small class="form-text text-muted">Format yang diizinkan: JPG, JPEG, PNG, PDF (Maksimal 2MB)</small>
+                  <?php if(!empty($facility->dokumen_bast)): ?>
+                    <div class="mt-2">
+                      <small class="text-info">Dokumen saat ini:
+                        <a href="<?php echo base_url('uploads/facilities/'.$facility->dokumen_bast); ?>" target="_blank">
+                          <?php echo $facility->dokumen_bast; ?>
+                        </a>
+                      </small>
+                    </div>
+                  <?php endif; ?>
+                  <?php echo form_error('dokumen_bast', '<small class="text-danger">', '</small>'); ?>
+                </div>
+              </div>
+
+              <div class="form-group row">
                 <label for="status" class="col-sm-2 col-form-label">Status</label>
                 <div class="col-sm-10">
                   <select class="form-control" id="status" name="status" required>
                     <option value="">Pilih Status</option>
-                    <option value="active" <?php echo set_select('status', 'active'); ?>>Active</option>
-                    <option value="inactive" <?php echo set_select('status', 'inactive'); ?>>Inactive</option>
-                    <option value="maintenance" <?php echo set_select('status', 'maintenance'); ?>>Maintenance</option>
+                    <option value="active" <?php echo set_select('status', 'active', ($facility->status == 'active')); ?>>Active</option>
+                    <option value="inactive" <?php echo set_select('status', 'inactive', ($facility->status == 'inactive')); ?>>Inactive</option>
+                    <option value="maintenance" <?php echo set_select('status', 'maintenance', ($facility->status == 'maintenance')); ?>>Maintenance</option>
                   </select>
                   <?php echo form_error('status', '<small class="text-danger">', '</small>'); ?>
                 </div>

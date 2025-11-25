@@ -36,11 +36,14 @@ class M_Vendor extends CI_Model {
 
     // Get vendors with facility count
     public function get_vendors_with_facility_count() {
-        $this->db->select('vendors.*, COUNT(facilities.id) as facility_count');
+        $this->db->select('vendors.*, COUNT(facilities.id) as facility_count, COALESCE(SUM(facilities.total_harga_sewa), 0) as total_value');
         $this->db->from('vendors');
         $this->db->join('facilities', 'facilities.vendor_id = vendors.id', 'left');
         $this->db->group_by('vendors.id');
-        return $this->db->get()->result();
+        
+        $result = $this->db->get()->result();
+        
+        return $result;
     }
 
     // Get vendor statistics

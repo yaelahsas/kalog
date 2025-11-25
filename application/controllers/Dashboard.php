@@ -6,14 +6,22 @@ class Dashboard extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model(['M_Facility', 'M_Area', 'M_Vendor', 'M_FacilityType', 'M_Auth']);
-        $this->load->helper(['url', 'form']);
+        $this->load->helper(['url', 'form', 'permission']); // Load permission helper
         $this->load->library(['session', 'form_validation']);
         $this->load->database();
         
-        // Get session data
-        $session_data = $this->M_Auth->session(array('root','admin'));
+        // DEBUG LOG: Track main Dashboard constructor access
+        log_message('debug', 'DASHBOARD DEBUG: Main Dashboard constructor called');
+        
+        // FIX: Allow 'user' role access to dashboard
+        $session_data = $this->M_Auth->session(array('root','admin','user'));
         if ($session_data === FALSE) {
+            // DEBUG LOG: Track redirect to logout
+            log_message('debug', 'DASHBOARD DEBUG: Session validation failed in main Dashboard, redirecting to logout');
             redirect(site_url('admin/auth/logout'),'refresh');
+        } else {
+            // DEBUG LOG: Successful session validation
+            log_message('debug', 'DASHBOARD DEBUG: Session validation successful in main Dashboard for user: ' . $session_data['username'] . ' (level: ' . $session_data['level'] . ')');
         }
         
         // Format session data to match expected format

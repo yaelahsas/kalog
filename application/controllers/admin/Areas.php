@@ -8,11 +8,12 @@ class Areas extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->sess = $this->M_Auth->session(array('root', 'admin'));
+        $this->sess = $this->M_Auth->session(array('root', 'admin', 'user'));
         if ($this->sess === FALSE) {
             redirect(site_url('admin/auth/logout'), 'refresh');
         }
         $this->load->model('M_Area');
+        $this->load->helper('permission');
     }
 
     // ==============================================
@@ -55,6 +56,11 @@ class Areas extends CI_Controller
 
     public function add()
     {
+        // Check if user has permission to add
+        if (!can_add($this->sess)) {
+            $this->session->set_flashdata('notif', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-ban"></i> Anda tidak memiliki izin untuk menambah data!</div>');
+            redirect(site_url('dashboard/areas'), 'refresh');
+        }
         $data['datatables'] = false;
         $data['icheck']     = false;
         $data['switch']     = false;
@@ -103,6 +109,12 @@ class Areas extends CI_Controller
 
     public function edit($id = null)
     {
+        // Check if user has permission to edit
+        if (!can_edit($this->sess)) {
+            $this->session->set_flashdata('notif', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-ban"></i> Anda tidak memiliki izin untuk mengedit data!</div>');
+            redirect(site_url('dashboard/areas'), 'refresh');
+        }
+        
         if ($id != null) {
             $data['datatables'] = false;
             $data['icheck']     = false;
@@ -165,7 +177,7 @@ class Areas extends CI_Controller
         $draw   = intval($this->input->post("draw"));
         $start  = intval($this->input->post("start"));
         $length = intval($this->input->post("length"));
-        // $search = $this->input->post("search")['value'];
+        $search = $this->input->post("search")['value'];
 
         // Total tanpa filter
         $total = $this->db->count_all("areas");
@@ -213,6 +225,16 @@ class Areas extends CI_Controller
 
     public function delete($id = null)
     {
+        // Check if user has permission to delete
+        if (!can_delete($this->sess)) {
+            $response = array(
+                'status' => 'error',
+                'message' => 'Anda tidak memiliki izin untuk menghapus data!',
+            );
+            echo json_encode($response);
+            return;
+        }
+        
         if ($id != null) {
             $response = $this->M_Area->delete_area($id);
             if ($response) {
@@ -238,11 +260,21 @@ class Areas extends CI_Controller
     public function delete_ajax($id = null)
     {
         // Check if user is authenticated
-        $session_data = $this->M_Auth->session(array('root','admin'));
+        $session_data = $this->M_Auth->session(array('root','admin','user'));
         if ($session_data === FALSE) {
             $response = [
                 'success' => false,
                 'message' => 'Authentication required'
+            ];
+            echo json_encode($response);
+            return;
+        }
+        
+        // Check if user has permission to delete
+        if (!can_delete($session_data)) {
+            $response = [
+                'success' => false,
+                'message' => 'Anda tidak memiliki izin untuk menghapus data!'
             ];
             echo json_encode($response);
             return;

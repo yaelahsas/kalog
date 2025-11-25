@@ -164,6 +164,7 @@ class M_Auth extends CI_Model {
 
   public function session($levels=array()){
     $session = $this->session->userdata();
+    
     if (!empty($session)) {
       if (!empty($session['id']) && !empty($session['name']) && !empty($session['username']) && !empty($session['email']) && !empty($session['level']) && !empty($session['image']) && !empty($session['created'])) {
         $id       = $this->encryption->decrypt($session['id']);
@@ -173,6 +174,7 @@ class M_Auth extends CI_Model {
         $level    = $this->encryption->decrypt($session['level']);
         $image    = $this->encryption->decrypt($session['image']);
         $created  = $this->encryption->decrypt($session['created']);
+        
         if (in_array($level, $levels, TRUE)) {
           $data = [
             'id'        => $id,

@@ -7,7 +7,10 @@ class Dashboard extends CI_Controller {
   public function __construct(){
     parent::__construct();
     $this->load->model(['M_Auth', 'M_Facility', 'M_Area', 'M_Vendor', 'M_FacilityType']);
-    $this->sess = $this->M_Auth->session(array('root','admin'));
+    $this->load->helper('permission'); // Load permission helper
+    
+    // FIX: Allow 'user' role access to dashboard
+    $this->sess = $this->M_Auth->session(array('root','admin','user'));
     if ($this->sess === FALSE) {
       redirect(site_url('admin/auth/logout'),'refresh');
     }

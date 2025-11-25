@@ -6,11 +6,12 @@ class Vendors extends CI_Controller {
 
     public function __construct(){
         parent::__construct();
-        $this->sess = $this->M_Auth->session(array('root','admin'));
+        $this->sess = $this->M_Auth->session(array('root','admin','user'));
         if ($this->sess === FALSE) {
             redirect(site_url('admin/auth/logout'),'refresh');
         }
         $this->load->model('M_Vendor');
+        $this->load->helper('permission');
     }
 
     // ==============================================
@@ -51,6 +52,11 @@ class Vendors extends CI_Controller {
     }
 
     public function add(){
+        // Check if user has permission to add
+        if (!can_add($this->sess)) {
+            $this->session->set_flashdata('notif', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-ban"></i> Anda tidak memiliki izin untuk menambah data!</div>');
+            redirect(site_url('dashboard/vendors'), 'refresh');
+        }
         $data['datatables'] = false;
         $data['icheck']     = false;
         $data['switch']     = false;
@@ -97,6 +103,12 @@ class Vendors extends CI_Controller {
     }
 
     public function edit($id=null){
+        // Check if user has permission to edit
+        if (!can_edit($this->sess)) {
+            $this->session->set_flashdata('notif', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-ban"></i> Anda tidak memiliki izin untuk mengedit data!</div>');
+            redirect(site_url('dashboard/vendors'), 'refresh');
+        }
+        
         if ($id != null) {
             $data['datatables'] = false;
             $data['icheck']     = false;
@@ -153,11 +165,64 @@ class Vendors extends CI_Controller {
     // ==============================================
 
     public function data(){
-        $data = $this->M_Vendor->get_vendors_with_facility_count();
-        echo json_encode($data);
+        $draw   = intval($this->input->post("draw"));
+        $start  = intval($this->input->post("start"));
+        $length = intval($this->input->post("length"));
+        $search = $this->input->post("search")['value'];
+
+        // Total tanpa filter
+        $total = $this->db->count_all("vendors");
+
+        // Query untuk filtered count
+        $this->db->select('vendors.*, COUNT(facilities.id) as facility_count, COALESCE(SUM(facilities.total_harga_sewa), 0) as total_value');
+        $this->db->from('vendors');
+        $this->db->join('facilities', 'facilities.vendor_id = vendors.id', 'left');
+        $this->db->group_by('vendors.id');
+
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('vendors.nama_vendor', $search);
+            $this->db->group_end();
+        }
+
+        $filtered = $this->db->get()->num_rows();
+
+        // Query untuk paginated data
+        $this->db->select('vendors.*, COUNT(facilities.id) as facility_count, COALESCE(SUM(facilities.total_harga_sewa), 0) as total_value');
+        $this->db->from('vendors');
+        $this->db->join('facilities', 'facilities.vendor_id = vendors.id', 'left');
+        $this->db->group_by('vendors.id');
+
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('vendors.nama_vendor', $search);
+            $this->db->group_end();
+        }
+
+        $this->db->limit($length, $start);
+
+        $data = $this->db->get()->result();
+
+        // Format JSON yang sesuai untuk DataTables server-side processing
+        echo json_encode([
+            "draw"            => $draw,
+            "recordsTotal"    => $total,
+            "recordsFiltered" => $filtered,
+            "data"            => $data
+        ]);
     }
 
     public function delete($id=null){
+        // Check if user has permission to delete
+        if (!can_delete($this->sess)) {
+            $response = array(
+                'status' => 'error',
+                'message' => 'Anda tidak memiliki izin untuk menghapus data!',
+            );
+            echo json_encode($response);
+            return;
+        }
+        
         if ($id != null) {
             $response = $this->M_Vendor->delete_vendor($id);
             if ($response) {

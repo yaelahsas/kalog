@@ -7,12 +7,12 @@ class Facilities extends CI_Controller {
     public function __construct(){
         parent::__construct();
         $this->load->model(['M_Facility', 'M_Area', 'M_Vendor', 'M_FacilityType', 'M_Auth']);
-        $this->sess = $this->M_Auth->session(array('root','admin'));
+        $this->sess = $this->M_Auth->session(array('root','admin','user'));
         if ($this->sess === FALSE) {
             redirect(site_url('admin/auth/logout'),'refresh');
         }
-        $this->load->helper(['url', 'form']);
-        $this->load->library(['session', 'form_validation']);
+        $this->load->helper(['url', 'form', 'permission']);
+        $this->load->library(['session', 'form_validation', 'upload', 'permission_lib']);
     }
 
     // ==============================================
@@ -55,6 +55,11 @@ class Facilities extends CI_Controller {
 
     // Add facility page
     public function add() {
+        // Check if user has permission to add
+        if (!can_add($this->sess)) {
+            $this->session->set_flashdata('notif', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-ban"></i> Anda tidak memiliki izin untuk menambah data!</div>');
+            redirect(site_url('dashboard/facilities'),'refresh');
+        }
         $data['title'] = 'Tambah Fasilitas';
         $data['card_title'] = 'Tambah Fasilitas';
         $data['sidebar'] = 'facility-add';
@@ -79,18 +84,42 @@ class Facilities extends CI_Controller {
         $this->form_validation->set_rules('tahun_unit', 'Tahun Unit', 'numeric');
         $this->form_validation->set_rules('status', 'Status', 'required');
         
-        // File upload validation
+        // Check if upload directory exists, if not create it
+        $upload_path = './uploads/facilities/';
+        if (!is_dir($upload_path)) {
+            mkdir($upload_path, 0755, true);
+        }
+        
+        // File upload validation for dokumen_perjanjian
         if (!empty($_FILES['dokumen_perjanjian']['name'])) {
-            $config['upload_path'] = './uploads/facilities/';
+            $config['upload_path'] = $upload_path;
             $config['allowed_types'] = 'jpg|jpeg|png|pdf';
             $config['max_size'] = 2048; // 2MB
             $config['encrypt_name'] = TRUE;
+            $config['file_name'] = 'perjanjian_' . time();
             
-            $this->load->library('upload', $config);
+            $this->upload->initialize($config);
             
             if (!$this->upload->do_upload('dokumen_perjanjian')) {
                 $this->form_validation->set_error_delimiters('<small class="text-danger">', '</small>');
                 $this->session->set_flashdata('notif', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-ban"></i> ' . $this->upload->display_errors('', '') . '</div>');
+                redirect(site_url('dashboard/facilities/add'),'refresh');
+            }
+        }
+        
+        // File upload validation for dokumen_bast
+        if (!empty($_FILES['dokumen_bast']['name'])) {
+            $config_bast['upload_path'] = $upload_path;
+            $config_bast['allowed_types'] = 'jpg|jpeg|png|pdf';
+            $config_bast['max_size'] = 2048; // 2MB
+            $config_bast['encrypt_name'] = TRUE;
+            $config_bast['file_name'] = 'bast_' . time();
+            
+            $this->upload->initialize($config_bast);
+            
+            if (!$this->upload->do_upload('dokumen_bast')) {
+                $this->form_validation->set_error_delimiters('<small class="text-danger">', '</small>');
+                $this->session->set_flashdata('notif', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-ban"></i> Error upload BAST: ' . $this->upload->display_errors('', '') . '</div>');
                 redirect(site_url('dashboard/facilities/add'),'refresh');
             }
         }
@@ -112,10 +141,32 @@ class Facilities extends CI_Controller {
                 'keterangan' => $this->input->post('keterangan') ?: null
             ];
             
-            // Handle file upload
+            // Handle file upload for dokumen_perjanjian
             if (!empty($_FILES['dokumen_perjanjian']['name'])) {
+                $config['upload_path'] = $upload_path;
+                $config['allowed_types'] = 'jpg|jpeg|png|pdf';
+                $config['max_size'] = 2048; // 2MB
+                $config['encrypt_name'] = TRUE;
+                $config['file_name'] = 'perjanjian_' . time();
+                
+                $this->upload->initialize($config);
+                $this->upload->do_upload('dokumen_perjanjian');
                 $upload_data = $this->upload->data();
                 $data_insert['dokumen_perjanjian'] = $upload_data['file_name'];
+            }
+            
+            // Handle file upload for dokumen_bast
+            if (!empty($_FILES['dokumen_bast']['name'])) {
+                $config_bast['upload_path'] = $upload_path;
+                $config_bast['allowed_types'] = 'jpg|jpeg|png|pdf';
+                $config_bast['max_size'] = 2048; // 2MB
+                $config_bast['encrypt_name'] = TRUE;
+                $config_bast['file_name'] = 'bast_' . time();
+                
+                $this->upload->initialize($config_bast);
+                $this->upload->do_upload('dokumen_bast');
+                $upload_data_bast = $this->upload->data();
+                $data_insert['dokumen_bast'] = $upload_data_bast['file_name'];
             }
             
             if ($this->M_Facility->insert_facility($data_insert)) {
@@ -155,6 +206,12 @@ class Facilities extends CI_Controller {
 
     // Edit facility page
     public function edit($id = null) {
+        // Check if user has permission to edit
+        if (!can_edit($this->sess)) {
+            $this->session->set_flashdata('notif', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-ban"></i> Anda tidak memiliki izin untuk mengedit data!</div>');
+            redirect(site_url('dashboard/facilities'),'refresh');
+        }
+        
         if ($id != null) {
             $data['title'] = 'Edit Fasilitas';
             $data['card_title'] = 'Edit Fasilitas';
@@ -183,20 +240,45 @@ class Facilities extends CI_Controller {
             $this->form_validation->set_rules('tahun_unit', 'Tahun Unit', 'numeric');
             $this->form_validation->set_rules('status', 'Status', 'required');
             
-            // File upload validation
+            // Check if upload directory exists, if not create it
+            $upload_path = './uploads/facilities/';
+            if (!is_dir($upload_path)) {
+                mkdir($upload_path, 0755, true);
+            }
+            
+            // File upload validation for dokumen_perjanjian
             $upload_success = true;
             if (!empty($_FILES['dokumen_perjanjian']['name'])) {
-                $config['upload_path'] = './uploads/facilities/';
+                $config['upload_path'] = $upload_path;
                 $config['allowed_types'] = 'jpg|jpeg|png|pdf';
                 $config['max_size'] = 2048; // 2MB
                 $config['encrypt_name'] = TRUE;
+                $config['file_name'] = 'perjanjian_' . time();
                 
-                $this->load->library('upload', $config);
+                $this->upload->initialize($config);
                 
                 if (!$this->upload->do_upload('dokumen_perjanjian')) {
                     $upload_success = false;
                     $this->form_validation->set_error_delimiters('<small class="text-danger">', '</small>');
                     $this->session->set_flashdata('notif', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-ban"></i> ' . $this->upload->display_errors('', '') . '</div>');
+                    redirect(site_url('dashboard/facilities/edit/'.$id),'refresh');
+                }
+            }
+            
+            // File upload validation for dokumen_bast
+            if (!empty($_FILES['dokumen_bast']['name'])) {
+                $config_bast['upload_path'] = $upload_path;
+                $config_bast['allowed_types'] = 'jpg|jpeg|png|pdf';
+                $config_bast['max_size'] = 2048; // 2MB
+                $config_bast['encrypt_name'] = TRUE;
+                $config_bast['file_name'] = 'bast_' . time();
+                
+                $this->upload->initialize($config_bast);
+                
+                if (!$this->upload->do_upload('dokumen_bast')) {
+                    $upload_success = false;
+                    $this->form_validation->set_error_delimiters('<small class="text-danger">', '</small>');
+                    $this->session->set_flashdata('notif', '<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fas fa-ban"></i> Error upload BAST: ' . $this->upload->display_errors('', '') . '</div>');
                     redirect(site_url('dashboard/facilities/edit/'.$id),'refresh');
                 }
             }
@@ -218,16 +300,44 @@ class Facilities extends CI_Controller {
                     'keterangan' => $this->input->post('keterangan') ?: null
                 ];
                 
-                // Handle file upload
+                // Handle file upload for dokumen_perjanjian
                 if (!empty($_FILES['dokumen_perjanjian']['name'])) {
                     // Delete old file if exists
                     $old_facility = $this->M_Facility->get_facility_by_id($id);
-                    if (!empty($old_facility->dokumen_perjanjian) && file_exists('./uploads/facilities/' . $old_facility->dokumen_perjanjian)) {
-                        unlink('./uploads/facilities/' . $old_facility->dokumen_perjanjian);
+                    if (!empty($old_facility->dokumen_perjanjian) && file_exists($upload_path . $old_facility->dokumen_perjanjian)) {
+                        unlink($upload_path . $old_facility->dokumen_perjanjian);
                     }
                     
+                    $config['upload_path'] = $upload_path;
+                    $config['allowed_types'] = 'jpg|jpeg|png|pdf';
+                    $config['max_size'] = 2048; // 2MB
+                    $config['encrypt_name'] = TRUE;
+                    $config['file_name'] = 'perjanjian_' . time();
+                    
+                    $this->upload->initialize($config);
+                    $this->upload->do_upload('dokumen_perjanjian');
                     $upload_data = $this->upload->data();
                     $data_update['dokumen_perjanjian'] = $upload_data['file_name'];
+                }
+                
+                // Handle file upload for dokumen_bast
+                if (!empty($_FILES['dokumen_bast']['name'])) {
+                    // Delete old file if exists
+                    $old_facility = $this->M_Facility->get_facility_by_id($id);
+                    if (!empty($old_facility->dokumen_bast) && file_exists($upload_path . $old_facility->dokumen_bast)) {
+                        unlink($upload_path . $old_facility->dokumen_bast);
+                    }
+                    
+                    $config_bast['upload_path'] = $upload_path;
+                    $config_bast['allowed_types'] = 'jpg|jpeg|png|pdf';
+                    $config_bast['max_size'] = 2048; // 2MB
+                    $config_bast['encrypt_name'] = TRUE;
+                    $config_bast['file_name'] = 'bast_' . time();
+                    
+                    $this->upload->initialize($config_bast);
+                    $this->upload->do_upload('dokumen_bast');
+                    $upload_data_bast = $this->upload->data();
+                    $data_update['dokumen_bast'] = $upload_data_bast['file_name'];
                 }
                 
                 if ($this->M_Facility->update_facility($id, $data_update)) {
@@ -376,6 +486,16 @@ class Facilities extends CI_Controller {
 
     // Delete facility
     public function delete($id = null) {
+        // Check if user has permission to delete
+        if (!can_delete($this->sess)) {
+            $response = array(
+                'status' => 'error',
+                'message' => 'Anda tidak memiliki izin untuk menghapus data!',
+            );
+            echo json_encode($response);
+            return;
+        }
+        
         if ($id != null) {
             $response = $this->M_Facility->delete_facility($id);
             if ($response) {
@@ -436,11 +556,25 @@ class Facilities extends CI_Controller {
     // Bulk action for facilities
     public function bulk_action() {
         // Check if user is authenticated
-        $session_data = $this->M_Auth->session(array('root','admin'));
+        $session_data = $this->M_Auth->session(array('root','admin','user'));
         if ($session_data === FALSE) {
             $response = [
                 'success' => false,
                 'message' => 'Authentication required'
+            ];
+            echo json_encode($response);
+            return;
+        }
+        
+        // Check if user has permission for bulk actions
+        $input = json_decode(file_get_contents('php://input'), true);
+        $action = isset($input['action']) ? $input['action'] : '';
+        
+        // Only allow bulk actions that don't involve add/edit/delete for user level
+        if (!can_edit($session_data) && in_array($action, ['activate', 'deactivate', 'maintenance', 'delete'])) {
+            $response = [
+                'success' => false,
+                'message' => 'Anda tidak memiliki izin untuk melakukan aksi ini!'
             ];
             echo json_encode($response);
             return;
@@ -516,11 +650,21 @@ class Facilities extends CI_Controller {
     // Delete facility via AJAX
     public function delete_ajax($id = null) {
         // Check if user is authenticated
-        $session_data = $this->M_Auth->session(array('root','admin'));
+        $session_data = $this->M_Auth->session(array('root','admin','user'));
         if ($session_data === FALSE) {
             $response = [
                 'success' => false,
                 'message' => 'Authentication required'
+            ];
+            echo json_encode($response);
+            return;
+        }
+        
+        // Check if user has permission to delete
+        if (!can_delete($session_data)) {
+            $response = [
+                'success' => false,
+                'message' => 'Anda tidak memiliki izin untuk menghapus data!'
             ];
             echo json_encode($response);
             return;
@@ -564,11 +708,21 @@ class Facilities extends CI_Controller {
     // Import facilities data
     public function import_data() {
         // Check if user is authenticated
-        $session_data = $this->M_Auth->session(array('root','admin'));
+        $session_data = $this->M_Auth->session(array('root','admin','user'));
         if ($session_data === FALSE) {
             $response = [
                 'success' => false,
                 'message' => 'Authentication required'
+            ];
+            echo json_encode($response);
+            return;
+        }
+        
+        // Check if user has permission to add
+        if (!can_add($session_data)) {
+            $response = [
+                'success' => false,
+                'message' => 'Anda tidak memiliki izin untuk mengimpor data!'
             ];
             echo json_encode($response);
             return;

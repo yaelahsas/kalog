@@ -32,6 +32,7 @@
           </li>
 
           <!-- Facilities Menu -->
+          <?php if (can_view_menu('facilities', $session)) { ?>
           <?php $side_facilities = array('facilities','facility-detail','facility-add','facility-edit') ?>
           <li class="nav-item <?php if(in_array($sidebar, $side_facilities)){echo 'menu-open';}?>">
             <a href="#" class="nav-link <?php if(in_array($sidebar, $side_facilities)){echo 'active';}?>">
@@ -48,16 +49,20 @@
                   <p>Daftar Fasilitas</p>
                 </a>
               </li>
+              <?php if (can_add($session)) { ?>
               <li class="nav-item">
                 <a href="<?= site_url('dashboard/facilities/add') ?>" class="nav-link <?php if($sidebar=='facility-add'){echo 'active';} ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Tambah Fasilitas</p>
                 </a>
               </li>
+              <?php } ?>
             </ul>
           </li>
+          <?php } ?>
 
           <!-- Areas Menu -->
+          <?php if (can_view_menu('areas', $session)) { ?>
           <?php $side_areas = array('areas','area-add','area-edit') ?>
           <li class="nav-item <?php if(in_array($sidebar, $side_areas)){echo 'menu-open';}?>">
             <a href="#" class="nav-link <?php if(in_array($sidebar, $side_areas)){echo 'active';}?>">
@@ -74,16 +79,20 @@
                   <p>Daftar Area</p>
                 </a>
               </li>
+              <?php if (can_add($session)) { ?>
               <li class="nav-item">
                 <a href="<?= site_url('dashboard/areas/add') ?>" class="nav-link <?php if($sidebar=='area-add'){echo 'active';} ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Tambah Area</p>
                 </a>
               </li>
+              <?php } ?>
             </ul>
           </li>
+          <?php } ?>
 
           <!-- Vendors Menu -->
+          <?php if (can_view_menu('vendors', $session)) { ?>
           <?php $side_vendors = array('vendors','vendor-add','vendor-edit') ?>
           <li class="nav-item <?php if(in_array($sidebar, $side_vendors)){echo 'menu-open';}?>">
             <a href="#" class="nav-link <?php if(in_array($sidebar, $side_vendors)){echo 'active';}?>">
@@ -100,16 +109,20 @@
                   <p>Daftar Vendor</p>
                 </a>
               </li>
+              <?php if (can_add($session)) { ?>
               <li class="nav-item">
                 <a href="<?= site_url('dashboard/vendors/add') ?>" class="nav-link <?php if($sidebar=='vendor-add'){echo 'active';} ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Tambah Vendor</p>
                 </a>
               </li>
+              <?php } ?>
             </ul>
           </li>
+          <?php } ?>
 
           <!-- Facility Types Menu -->
+          <?php if (can_view_menu('facility_types', $session)) { ?>
           <?php $side_types = array('facility-types','facility-type-add','facility-type-edit') ?>
           <li class="nav-item <?php if(in_array($sidebar, $side_types)){echo 'menu-open';}?>">
             <a href="#" class="nav-link <?php if(in_array($sidebar, $side_types)){echo 'active';}?>">
@@ -126,29 +139,33 @@
                   <p>Daftar Jenis</p>
                 </a>
               </li>
+              <?php if (can_add($session)) { ?>
               <li class="nav-item">
                 <a href="<?= site_url('dashboard/facility_types/add') ?>" class="nav-link <?php if($sidebar=='facility-type-add'){echo 'active';} ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Tambah Jenis</p>
                 </a>
               </li>
+              <?php } ?>
             </ul>
           </li>
+          <?php } ?>
 
           <!-- Reports Menu -->
+          <?php if (can_view_menu('reports', $session)) { ?>
           <li class="nav-item">
             <a href="<?= site_url('dashboard/reports') ?>" class="nav-link <?php if($sidebar=='reports'){echo'active';}?>">
               <i class="nav-icon fas fa-chart-bar"></i>
               <p>Laporan</p>
             </a>
           </li>
+          <?php } ?>
 
+          <?php if (can_view_menu('account', $session) || can_view_menu('category', $session) || can_view_menu('phone', $session)) { ?>
           <li class="nav-header">MANAGEMENT</li>
 
-          <?php 
-            $side_account = array('account-index','account-add');
-            if (in_array($session['level'], array('root'))) {
-          ?>
+          <?php if (can_view_menu('account', $session)) { ?>
+          <?php $side_account = array('account-index','account-add'); ?>
           <li class="nav-item <?php if(in_array($sidebar, $side_account)){echo 'menu-open';}?>">
             <a href="#" class="nav-link <?php if(in_array($sidebar, $side_account)){echo 'active';}?>">
               <i class="nav-icon fas fa fa-user-circle"></i>
@@ -164,16 +181,19 @@
                   <p>Table</p>
                 </a>
               </li>
+              <?php if (can_add($session)) { ?>
               <li class="nav-item">
                 <a href="<?= site_url('admin/account/add') ?>" class="nav-link <?php if($sidebar==$side_account[1]){echo 'active';} ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Add</p>
                 </a>
               </li>
+              <?php } ?>
             </ul>
           </li>
           <?php } ?>
 
+          <?php if (can_view_menu('category', $session)) { ?>
           <?php $side_category = array('category-index','category-add') ?>
           <li class="nav-item <?php if(in_array($sidebar, $side_category)){echo 'menu-open';}?>">
             <a href="#" class="nav-link <?php if(in_array($sidebar, $side_category)){echo 'active';}?>">
@@ -190,15 +210,19 @@
                   <p>Table</p>
                 </a>
               </li>
+              <?php if (can_add($session)) { ?>
               <li class="nav-item">
                 <a href="<?= site_url('admin/category/add') ?>" class="nav-link <?php if($sidebar==$side_category[1]){echo 'active';} ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Add</p>
                 </a>
               </li>
+              <?php } ?>
             </ul>
           </li>
+          <?php } ?>
 
+          <?php if (can_view_menu('phone', $session)) { ?>
           <?php $side_phone = array('phone-index','phone-add') ?>
           <li class="nav-item <?php if(in_array($sidebar, $side_phone)){echo 'menu-open';}?>">
             <a href="#" class="nav-link <?php if(in_array($sidebar, $side_phone)){echo 'active';}?>">
@@ -215,14 +239,18 @@
                   <p>Table</p>
                 </a>
               </li>
+              <?php if (can_add($session)) { ?>
               <li class="nav-item">
                 <a href="<?= site_url('admin/phone/add') ?>" class="nav-link <?php if($sidebar==$side_phone[1]){echo 'active';} ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Add</p>
                 </a>
               </li>
+              <?php } ?>
             </ul>
           </li>
+          <?php } ?>
+          <?php } ?>
 
         </ul>
       </nav>

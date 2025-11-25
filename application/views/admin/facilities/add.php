@@ -161,6 +161,15 @@
               </div>
 
               <div class="form-group row">
+                <label for="dokumen_bast" class="col-sm-2 col-form-label">Dokumen BAST</label>
+                <div class="col-sm-10">
+                  <input type="file" class="form-control" id="dokumen_bast" name="dokumen_bast" accept=".jpg,.jpeg,.png,.pdf">
+                  <small class="form-text text-muted">Format yang diizinkan: JPG, JPEG, PNG, PDF (Maksimal 2MB)</small>
+                  <?php echo form_error('dokumen_bast', '<small class="text-danger">', '</small>'); ?>
+                </div>
+              </div>
+
+              <div class="form-group row">
                 <label for="status" class="col-sm-2 col-form-label">Status</label>
                 <div class="col-sm-10">
                   <select class="form-control" id="status" name="status" required>

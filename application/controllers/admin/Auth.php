@@ -14,7 +14,8 @@ class Auth extends CI_Controller {
   // ==============================================
 
   public function login(){
-    $sess = $this->M_Auth->session(array('root','admin'));
+    // FIX: Allow 'user' role to access login page (for session check)
+    $sess = $this->M_Auth->session(array('root','admin','user'));
     if ($sess === FALSE) {
       $data['datatables'] = false;
       $data['icheck']     = true;
@@ -55,7 +56,8 @@ class Auth extends CI_Controller {
   }
 
   public function register(){
-    $sess = $this->M_Auth->session(array('root','admin'));
+    // FIX: Allow 'user' role to access register page (for session check)
+    $sess = $this->M_Auth->session(array('root','admin','user'));
     if ($sess === FALSE) {
       $data['datatables'] = false;
       $data['icheck']     = true;

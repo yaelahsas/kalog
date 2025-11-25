@@ -38,11 +38,13 @@
         <div class="card">
           <div class="card-header">
             <h3 class="card-title"><?php echo $card_title; ?></h3>
+            <?php if (can_add($session)) { ?>
             <div class="card-tools">
               <a href="<?php echo $btn_add['url']; ?>" class="btn btn-primary btn-sm">
                 <i class="fas fa-plus"></i> <?php echo $btn_add['name']; ?>
               </a>
             </div>
+            <?php } ?>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -146,19 +148,28 @@ $(document).ready(function() {
             {
                 "targets": 12,
                 "render": function(data, type, row, meta) {
-                    return `
-                        <div class="btn-group">
-                            <a href="<?php echo site_url('dashboard/facilities/detail/'); ?>` + row.id + `" class="btn btn-info btn-sm">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="<?php echo site_url('dashboard/facilities/edit/'); ?>` + row.id + `" class="btn btn-warning btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteFacility(` + row.id + `)">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
+                    var buttons = '';
+                    
+                    // Detail button - all users can view
+                    buttons += `<a href="<?php echo site_url('dashboard/facilities/detail/'); ?>` + row.id + `" class="btn btn-info btn-sm">
+                        <i class="fas fa-eye"></i>
+                    </a>`;
+                    
+                    // Edit button - only admin and root
+                    <?php if (can_edit($session)) { ?>
+                    buttons += `<a href="<?php echo site_url('dashboard/facilities/edit/'); ?>` + row.id + `" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i>
+                    </a>`;
+                    <?php } ?>
+                    
+                    // Delete button - only admin and root
+                    <?php if (can_delete($session)) { ?>
+                    buttons += `<button type="button" class="btn btn-danger btn-sm" onclick="deleteFacility(` + row.id + `)">
+                        <i class="fas fa-trash"></i>
+                    </button>`;
+                    <?php } ?>
+                    
+                    return `<div class="btn-group">` + buttons + `</div>`;
                 }
             }
         ],
